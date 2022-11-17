@@ -13,9 +13,8 @@ public class Login extends JFrame{
     public Login() {
         setContentPane(panel1);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 400);
-        ImageIcon img = new ImageIcon("drill.png");
-        setIconImage(img.getImage());
+        setSize(300, 330);
+        setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());    //https://www.youtube.com/watch?v=cKmr-9Wc2u4
         setVisible(true);
 
         btnLogin.addActionListener(new ActionListener() {
