@@ -11,11 +11,20 @@ public class Login extends JFrame{
     private JLabel lblDrillIcon;
 
     public Login() {
+        setContentPane(panel1);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 400);
+        ImageIcon img = new ImageIcon("drill.png");
+        setIconImage(img.getImage());
+        setVisible(true);
+
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
                 if(validLogin()){
                     JOptionPane.showMessageDialog(null, "Welcome " + txtUsername.getText());
+                    txtUsername.setText("");
+                    txtPassword.setText("");
                     MainMenu mainMenu = new MainMenu();
                 }
             }
@@ -53,15 +62,6 @@ public class Login extends JFrame{
 
 
     public static void main(String[] args) {
-
-        JFrame frame = new JFrame("Login");
-        frame.setContentPane(new Login().panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 400);
-
-        ImageIcon img = new ImageIcon("drill.png");
-        frame.setIconImage(img.getImage());
-
-        frame.setVisible(true);
+        new Login();
     }
 }

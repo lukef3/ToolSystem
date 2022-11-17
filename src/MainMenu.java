@@ -8,9 +8,8 @@ public class MainMenu extends JFrame{
     private JButton button1;
 
     public MainMenu(){
-        JFrame mainFrame = new JFrame("Main Menu");
-        mainFrame.setSize(400,400);
-        mainFrame.setVisible(true);
+        setSize(400,400);
+        setVisible(true);
 
         button1.addActionListener(new ActionListener() {
             @Override
