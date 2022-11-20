@@ -8,14 +8,17 @@ public class Login extends JFrame{
     private JPasswordField txtPassword;
     private JButton btnLogin;
     private JButton btnCancel;
-    private JLabel lblDrillIcon;
+    private JLabel lblLogin;
 
     public Login() {
         setContentPane(panel1);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 330);
+        setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());    //https://www.youtube.com/watch?v=cKmr-9Wc2u4
         setVisible(true);
+        setLocationRelativeTo(null);
+
+        setSize(300, 350);
 
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -24,6 +27,7 @@ public class Login extends JFrame{
                     JOptionPane.showMessageDialog(null, "Welcome " + txtUsername.getText());
                     txtUsername.setText("");
                     txtPassword.setText("");
+                    dispose();
                     MainMenu mainMenu = new MainMenu();
                 }
             }
@@ -58,7 +62,6 @@ public class Login extends JFrame{
        // if(txtUsername.getText().equals(""));
         return result;
     }
-
 
     public static void main(String[] args) {
         new Login();
