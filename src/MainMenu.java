@@ -1,12 +1,14 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainMenu extends JFrame{
 
     private JPanel panel1;
     JMenu fileMenu, toolsMenu, rentMenu;
     JMenuItem item=null;
+    ArrayList<Tool> allTools = new ArrayList<>();
 
     public MainMenu(){
         setContentPane(panel1);
@@ -52,7 +54,6 @@ public class MainMenu extends JFrame{
         String itemNames[] = {"Add","Amend","Remove","View"};
 
         for(int i=0;i<itemNames.length;i++) {
-
             item = new JMenuItem(itemNames[i]);
             item.addActionListener(this::actionPerformed);
             toolsMenu.add(item);
@@ -65,7 +66,6 @@ public class MainMenu extends JFrame{
         String itemNames[] = {"Add Rental","Return Rental","View Rental"};
 
         for(int i=0;i<itemNames.length;i++) {
-
             item = new JMenuItem(itemNames[i]);
             item.addActionListener(this::actionPerformed);
             rentMenu.add(item);
@@ -93,8 +93,7 @@ public class MainMenu extends JFrame{
             }
         }
         else if(e.getActionCommand().equals("Add"))
-            JOptionPane.showMessageDialog(null,"Adding new bicycle details",
-                    "Adding Bike",JOptionPane.INFORMATION_MESSAGE);
+            addTool();
         else if(e.getActionCommand().equals("Amend"))
             JOptionPane.showMessageDialog(null,"Amending bicycle details",
                     "Amending Bike",JOptionPane.INFORMATION_MESSAGE);
@@ -102,12 +101,40 @@ public class MainMenu extends JFrame{
             JOptionPane.showMessageDialog(null,"Removing bicycle details",
                     "Removing Bike",JOptionPane.INFORMATION_MESSAGE);
         else if(e.getActionCommand().equals("View"))
-            JOptionPane.showMessageDialog(null,"Viewing bicycle details",
-                    "Viewing Bike",JOptionPane.INFORMATION_MESSAGE);
+            viewTools(allTools);
+
 
         else if(e.getActionCommand().equals("Add Rental"))
             JOptionPane.showMessageDialog(null,"Adding rental...",
                     "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void addTool(){
+        String toolType, toolManufacturer, toolDesc;
+        Float toolRate;
+
+        toolType = JOptionPane.showInputDialog("Please enter tool type:");
+        toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
+        toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+        toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
+
+        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+        allTools.add(tool);
+    }
+
+    public void viewTools(ArrayList<Tool> allTools){
+        String allToolData = "";
+        Tool tool;
+
+        Iterator<Tool> iterator = allTools.iterator();
+
+        while (iterator.hasNext()){
+            tool = iterator.next();
+            if(tool != null){
+                allToolData += tool + "\n\n\n";
+            }
+        }
+        JOptionPane.showMessageDialog(null, allToolData, "List of all tools", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {
