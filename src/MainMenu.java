@@ -35,7 +35,7 @@ public class MainMenu extends JFrame{
 
         fileMenu = new JMenu("File");
 
-        String itemNames[] = {"New","Open","Save","Quit"};
+        String[] itemNames = {"New","Open","Save","Quit"};
 
         for(int i=0;i<itemNames.length;i++){
             item = new JMenuItem(itemNames[i]);
@@ -51,7 +51,7 @@ public class MainMenu extends JFrame{
 
         toolsMenu = new JMenu("Tools");
 
-        String itemNames[] = {"Add","Amend","Remove","View"};
+        String[] itemNames = {"Add","Amend","Remove","View"};
 
         for(int i=0;i<itemNames.length;i++) {
             item = new JMenuItem(itemNames[i]);
@@ -63,7 +63,7 @@ public class MainMenu extends JFrame{
 
         rentMenu = new JMenu("Rent");
 
-        String itemNames[] = {"Add Rental","Return Rental","View Rental"};
+        String[] itemNames = {"Add Rental","Return Rental","View Rental"};
 
         for(int i=0;i<itemNames.length;i++) {
             item = new JMenuItem(itemNames[i]);
@@ -95,8 +95,7 @@ public class MainMenu extends JFrame{
         else if(e.getActionCommand().equals("Add"))
             addTool();
         else if(e.getActionCommand().equals("Amend"))
-            JOptionPane.showMessageDialog(null,"Amending bicycle details",
-                    "Amending Bike",JOptionPane.INFORMATION_MESSAGE);
+            amendTools(allTools);
         else if(e.getActionCommand().equals("Remove"))
             JOptionPane.showMessageDialog(null,"Removing bicycle details",
                     "Removing Bike",JOptionPane.INFORMATION_MESSAGE);
@@ -111,7 +110,7 @@ public class MainMenu extends JFrame{
 
     public void addTool(){
         String toolType, toolManufacturer, toolDesc;
-        Float toolRate;
+        float toolRate;
 
         toolType = JOptionPane.showInputDialog("Please enter tool type:");
         toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
@@ -123,7 +122,7 @@ public class MainMenu extends JFrame{
     }
 
     public void viewTools(ArrayList<Tool> allTools){
-        String allToolData = "";
+        StringBuilder allToolData = new StringBuilder();
         Tool tool;
 
         Iterator<Tool> iterator = allTools.iterator();
@@ -131,10 +130,38 @@ public class MainMenu extends JFrame{
         while (iterator.hasNext()){
             tool = iterator.next();
             if(tool != null){
-                allToolData += tool + "\n\n\n";
+                allToolData.append(tool).append("\n");
             }
         }
-        JOptionPane.showMessageDialog(null, allToolData, "List of all tools", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, allToolData.toString(), "List of all tools", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void amendTools(ArrayList<Tool> allTools) {
+        ArrayList<Tool> amendableTools = new ArrayList<Tool>();
+        for (Tool tool : allTools) {
+            if (tool.getToolStatus().equals("IN")||tool.getToolStatus().equals("UNAVAILABLE")) {
+                amendableTools.add(tool);
+            }
+        }
+
+        String searchResults = "";
+
+        String search = JOptionPane.showInputDialog("Please enter a search phrase:");
+        for(Tool tool: amendableTools){
+            if(tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                searchResults += tool + "\n";
+            }
+        }
+
+        int searchID = Integer.parseInt(JOptionPane.showInputDialog("The following tools matches your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish the amend."));
+        Tool toolToAmend = null;
+        for (Tool tool: amendableTools){
+            if(tool.getId() == searchID){
+                toolToAmend = tool;
+            }
+
+        }
+        new AmendTool(toolToAmend);
     }
 
     public static void main(String[] args) {

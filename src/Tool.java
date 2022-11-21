@@ -1,26 +1,30 @@
 public class Tool {
-    private static int id;
+    private int id;
     private String toolType;
     private String toolManufacturer;
     private float toolRate;
     private String toolDesc;
     private String toolStatus;
+    private static int counter;
 
     public Tool(){
         this("Not Available", "Not Available", 0.0f, "Not Available");
     }
 
     public Tool(String toolType, String toolManufacturer, float toolRate, String toolDesc){
-        setId(id);
         setToolType(toolType);
         setToolManufacturer(toolManufacturer);
         setToolRate(toolRate);
         setToolDesc(toolDesc);
         setToolStatus("IN");
+        incrementCounter();
+        setId(counter);
     }
-
+    private static void incrementCounter(){
+        counter++;
+    }
     public void setId(int id) {
-        this.id++;
+        this.id = id;
     }
     public void setToolType(String toolType) {
         this.toolType = toolType;
