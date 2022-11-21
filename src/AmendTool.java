@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AmendTool extends JFrame {
     private JTextField IDField;
@@ -21,11 +23,38 @@ public class AmendTool extends JFrame {
         setVisible(true);
         setSize(500,500);
 
+        statusComboBox.addItem("IN");
+        statusComboBox.addItem("UNAVAILABLE");
+
         IDField.setText(String.valueOf(toolToAmend.getId()));
         toolTypeField.setText(toolToAmend.getToolType());
         manufacturerField.setText(toolToAmend.getToolManufacturer());
         descriptionField.setText(toolToAmend.getToolDesc());
         rateField.setText(String.valueOf(toolToAmend.getToolRate()));
+        if (toolToAmend.getToolStatus().equals("IN")) {
+            statusComboBox.setSelectedItem("IN");
+        }
+        else
+            statusComboBox.setSelectedItem("UNAVAILABLE");
+
+        amendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                toolToAmend.setToolType(toolTypeField.getText());
+                toolToAmend.setToolManufacturer(manufacturerField.getText());
+                toolToAmend.setToolDesc(descriptionField.getText());
+                toolToAmend.setToolRate(Float.parseFloat(rateField.getText()));
+                toolToAmend.setToolStatus(statusComboBox.getSelectedItem().toString());
+            }
+        });
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        new AmendTool(null);
     }
 }
 
