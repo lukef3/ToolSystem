@@ -137,19 +137,19 @@ public class MainMenu extends JFrame{
     }
 
     public void amendTools(ArrayList<Tool> allTools) {
-        ArrayList<Tool> amendableTools = new ArrayList<Tool>();
+        ArrayList<Tool> amendableTools = new ArrayList<>();
         for (Tool tool : allTools) {
             if (tool.getToolStatus().equals("IN")||tool.getToolStatus().equals("UNAVAILABLE")) {
                 amendableTools.add(tool);
             }
         }
 
-        String searchResults = "";
+        StringBuilder searchResults = new StringBuilder();
 
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
         for(Tool tool: amendableTools){
             if(tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
-                searchResults += tool + "\n";
+                searchResults.append(tool).append("\n");
             }
         }
 
