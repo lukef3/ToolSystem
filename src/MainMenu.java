@@ -119,6 +119,7 @@ public class MainMenu extends JFrame{
 
         Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
         allTools.add(tool);
+        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
     }
 
     public void viewTools(ArrayList<Tool> allTools){

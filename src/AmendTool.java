@@ -26,8 +26,6 @@ public class AmendTool extends JFrame {
         manufacturerField.setText(toolToAmend.getToolManufacturer());
         descriptionField.setText(toolToAmend.getToolDesc());
         rateField.setText(String.valueOf(toolToAmend.getToolRate()));
-
-
     }
 }
 
