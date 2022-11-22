@@ -70,7 +70,7 @@ public class MainMenu extends JFrame{
 
         rentMenu = new JMenu("Rent");
 
-        String[] itemNames = {"Add Rental","Return Rental","View Rental"};
+        String[] itemNames = {"Add Rental","Return Rental","View Rentals"};
 
         for(int i=0;i<itemNames.length;i++) {
             item = new JMenuItem(itemNames[i]);
@@ -82,20 +82,17 @@ public class MainMenu extends JFrame{
     public void actionPerformed(ActionEvent e) {
         int choice;
         if(e.getActionCommand().equals("New"))
-            JOptionPane.showMessageDialog(null,"Creating a new file to store bicycle details",
-                    "New File",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"New");
         else if(e.getActionCommand().equals("Open"))
-            JOptionPane.showMessageDialog(null,"Opening the file that stores bicycle details",
-                    "Opening File",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"New");
         else if(e.getActionCommand().equals("Save"))
-            JOptionPane.showMessageDialog(null,"Saving the file that stores bicycle details",
-                    "Saving File",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,"New");
         else if(e.getActionCommand().equals("Quit")) {
-            choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to quit the application?",
+            choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to quit?",
                     "Exiting Application", JOptionPane.YES_NO_CANCEL_OPTION);
             if(choice==JOptionPane.YES_OPTION){
-                JOptionPane.showMessageDialog(null,"Saving the file that stores bicycle details before terminating",
-                        "Saving File",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null,"Quitting...",
+                        "",JOptionPane.INFORMATION_MESSAGE);
                 System.exit(0);
             }
         }
@@ -113,49 +110,52 @@ public class MainMenu extends JFrame{
         else if(e.getActionCommand().equals("Add Rental"))
             JOptionPane.showMessageDialog(null,"Adding rental...",
                     "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+
+        else if(e.getActionCommand().equals("Return Rental"))
+            JOptionPane.showMessageDialog(null,"Returning rental...",
+                    "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+
+        else if(e.getActionCommand().equals("View Rentals"))
+            JOptionPane.showMessageDialog(null,"Viewing rentals...",
+                    "Add Rental",JOptionPane.INFORMATION_MESSAGE);
     }
-
-
-
-
-
-
-
-
 
     public void addTool(){
         String toolType, toolManufacturer, toolDesc;
         float toolRate;
 
-        toolType = JOptionPane.showInputDialog("Please enter tool type:");
-        if (toolType != null) {
-            while (toolType.isEmpty()) {
-                toolType = JOptionPane.showInputDialog(null, "Please enter tool type:", "No tool type entered", JOptionPane.ERROR_MESSAGE);
-            }
-            while ()
-        }
-                /*
+        toolType = JOptionPane.showInputDialog("Please enter the type of tool:");
+        if (toolType != null){
+            if (!toolType.isEmpty()){
                 toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
                 if (toolManufacturer != null){
-                    toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
-                    if (toolDesc != null){
-                        toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
-                        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
-                        allTools.add(tool);
-                        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+                    if (!toolManufacturer.isEmpty()){
+                        toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+                        if (toolDesc != null){
+                            if (!toolDesc.isEmpty()){
+                                toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
+                                if (toolRate != 0){
+                                    Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+                                    allTools.add(tool);
+                                    JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+                                }
+                            }
+                        }
                     }
                 }
-            }*/
+            }
+            else JOptionPane.showMessageDialog(null, "Please enter the type of tool:", "No tool type entered", JOptionPane.ERROR_MESSAGE);
+        }
+
+        /*toolType = JOptionPane.showInputDialog("Please enter the type of tool:");
+        toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
+        toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+        toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
+
+        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+        allTools.add(tool);
+        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");*/
     }
-
-
-
-
-
-
-
-
-
 
     public void viewTools(ArrayList<Tool> allTools){
 
@@ -167,7 +167,7 @@ public class MainMenu extends JFrame{
         while (iterator.hasNext()){
             tool = iterator.next();
             if(tool != null){
-                allToolData.append(tool).append("\n");
+                allToolData.append(tool).append("\n\n");
             }
         }
         if (!allTools.isEmpty()) {

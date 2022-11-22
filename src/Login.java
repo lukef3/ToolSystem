@@ -18,7 +18,7 @@ public class Login extends JFrame{
         setVisible(true);
         setLocationRelativeTo(null);
 
-        setSize(300, 350);
+        setSize(300, 400);
 
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
