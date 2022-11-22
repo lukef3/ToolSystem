@@ -31,6 +31,7 @@ public class AmendTool extends JFrame {
         manufacturerField.setText(toolToAmend.getToolManufacturer());
         descriptionField.setText(toolToAmend.getToolDesc());
         rateField.setText(String.valueOf(toolToAmend.getToolRate()));
+
         if (toolToAmend.getToolStatus().equals("IN")) {
             statusComboBox.setSelectedItem("IN");
         }
@@ -44,6 +45,7 @@ public class AmendTool extends JFrame {
                 toolToAmend.setToolDesc(descriptionField.getText());
                 toolToAmend.setToolRate(Float.parseFloat(rateField.getText()));
                 toolToAmend.setToolStatus(statusComboBox.getSelectedItem().toString());
+                dispose();
             }
         });
         cancelButton.addActionListener(new ActionListener() {

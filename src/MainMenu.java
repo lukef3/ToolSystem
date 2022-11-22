@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class MainMenu extends JFrame{
@@ -10,7 +11,6 @@ public class MainMenu extends JFrame{
     JMenu fileMenu, toolsMenu, rentMenu;
     JMenuItem item=null;
     ArrayList<Tool> allTools = new ArrayList<>();
-
     public MainMenu(){
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
         Font f = new Font("sans-serif", Font.PLAIN, 17);
@@ -31,6 +31,8 @@ public class MainMenu extends JFrame{
         menuBar.add(fileMenu);
         menuBar.add(toolsMenu);
         menuBar.add(rentMenu);
+
+        addTestTools();
 
         setSize(800,600);
         setVisible(true);
@@ -113,22 +115,48 @@ public class MainMenu extends JFrame{
                     "Add Rental",JOptionPane.INFORMATION_MESSAGE);
     }
 
+
+
+
+
+
+
+
+
     public void addTool(){
         String toolType, toolManufacturer, toolDesc;
         float toolRate;
 
         toolType = JOptionPane.showInputDialog("Please enter tool type:");
-        /*if (toolType==null){
-
-        }*/
-        toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
-        toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
-        toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
-
-        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
-        allTools.add(tool);
-        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+        if (toolType != null) {
+            while (toolType.isEmpty()) {
+                toolType = JOptionPane.showInputDialog(null, "Please enter tool type:", "No tool type entered", JOptionPane.ERROR_MESSAGE);
+            }
+            while ()
+        }
+                /*
+                toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
+                if (toolManufacturer != null){
+                    toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+                    if (toolDesc != null){
+                        toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
+                        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+                        allTools.add(tool);
+                        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+                    }
+                }
+            }*/
     }
+
+
+
+
+
+
+
+
+
+
     public void viewTools(ArrayList<Tool> allTools){
 
         StringBuilder allToolData = new StringBuilder();
@@ -213,5 +241,14 @@ public class MainMenu extends JFrame{
 
     public static void main(String[] args) {
         new MainMenu();
+    }
+
+    public void addTestTools(){
+        Tool t1 = new Tool("Drill", "DeWalt", 20, "This is a drill");
+        Tool t2 = new Tool("Jigsaw", "DeWalt", 50, "This is a jigsaw");
+        Tool t3 = new Tool("Cement Mixer", "DeWalt", 70, "This is a cement mixer");
+        allTools.add(t1);
+        allTools.add(t2);
+        allTools.add(t3);
     }
 }
