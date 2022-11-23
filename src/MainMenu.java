@@ -12,11 +12,12 @@ public class MainMenu extends JFrame{
 
     private JPanel panel1;
     private JButton feelingBoredButton;
-    JMenu fileMenu, toolsMenu, rentMenu, adminMenu;
-    JMenuItem item=null;
+    JMenu fileMenu, toolsMenu, rentMenu, userMenu;
+    JMenuItem item=null, addUser, amendUser, removeUser, viewUsers;
     ArrayList<Tool> allTools = new ArrayList<>();
     ArrayList<Rental> allRentals = new ArrayList<>();
-    public MainMenu(){
+
+    public MainMenu(ArrayList<User> allUsers){
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
         Font f = new Font("sans-serif", Font.PLAIN, 17);
         UIManager.put("MenuItem.font", f);
@@ -32,19 +33,54 @@ public class MainMenu extends JFrame{
         createFileMenu();
         createToolsMenu();
         createRentMenu();
-        createAdminMenu();
+
+        userMenu = new JMenu("Users");
+
+        addUser = new JMenuItem("Add User");
+        addUser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addUser(allUsers);
+            }
+        });
+
+        amendUser = new JMenuItem("Amend User");
+        amendUser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addUser(allUsers);
+            }
+        });
+
+        removeUser = new JMenuItem("Remove User");
+        removeUser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addUser(allUsers);
+            }
+        });
+
+        viewUsers = new JMenuItem("View Users");
+        viewUsers.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewUsers(allUsers);
+            }
+        });
+
+        userMenu.add(addUser);
+        userMenu.add(amendUser);
+        userMenu.add(removeUser);
+        userMenu.add(viewUsers);
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         menuBar.add(fileMenu);
         menuBar.add(toolsMenu);
         menuBar.add(rentMenu);
-        menuBar.add(adminMenu);
+        menuBar.add(userMenu);
 
         addTestTools();
 
         setSize(800,600);
         setVisible(true);
+
         feelingBoredButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 EventQueue.invokeLater(() -> {
@@ -54,12 +90,11 @@ public class MainMenu extends JFrame{
             }
         });
     }
-
     private void createFileMenu(){
 
         fileMenu = new JMenu("File");
 
-        String[] itemNames = {"New","Open","Save","Quit"};
+        String[] itemNames = {"New","Open","Save", "Log Out", "Quit Program"};
 
         for(int i=0;i<itemNames.length;i++){
             item = new JMenuItem(itemNames[i]);
@@ -95,12 +130,6 @@ public class MainMenu extends JFrame{
             rentMenu.add(item);
         }
     }
-    private void createAdminMenu(){
-
-        adminMenu = new JMenu("Admin");
-
-        adminMenu.add("View Stats");
-    }
 
     public void actionPerformed(ActionEvent e) {
         int choice;
@@ -110,13 +139,23 @@ public class MainMenu extends JFrame{
             JOptionPane.showMessageDialog(null,"New");
         else if(e.getActionCommand().equals("Save"))
             JOptionPane.showMessageDialog(null,"New");
-        else if(e.getActionCommand().equals("Quit")) {
-            choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to quit?",
-                    "Exiting Application", JOptionPane.YES_NO_CANCEL_OPTION);
+        else if(e.getActionCommand().equals("Exit System")) {
+            choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to exit the system?",
+                    "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
             if(choice==JOptionPane.YES_OPTION){
-                JOptionPane.showMessageDialog(null,"Quitting...",
+                JOptionPane.showMessageDialog(null,"Exiting... Goodbye :)",
                         "",JOptionPane.INFORMATION_MESSAGE);
                 System.exit(0);
+            }
+        }
+        else if (e.getActionCommand().equals("Log Out")) {
+            choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to log out?",
+                    "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
+            if(choice==JOptionPane.YES_OPTION){
+                JOptionPane.showMessageDialog(null,"Logging out...",
+                        "",JOptionPane.INFORMATION_MESSAGE);
+                new Login();
+                dispose();
             }
         }
 
@@ -139,8 +178,53 @@ public class MainMenu extends JFrame{
 
         else if(e.getActionCommand().equals("View Rentals"))
             viewRentals(allRentals);
-    }
 
+    }
+public void addUser(ArrayList<User> allUsers){
+        String username, password;
+
+        username = JOptionPane.showInputDialog("Please enter a username");
+            if (username!=null){
+                while (!isvalidUserName(username, allUsers)){
+                    username = JOptionPane.showInputDialog("Please enter a username");
+                }
+                password = JOptionPane.showInputDialog("Please enter a password");
+                if (password!=null){
+                    while (!isValidPass(password)){
+                        password = JOptionPane.showInputDialog("Please enter a password");
+                    }
+                }
+                User user = new User(username, password);
+                allUsers.add(user);
+            }
+}
+public void viewUsers(ArrayList<User> allUsers){
+    User user;
+
+    JTable tbl = new JTable();
+    DefaultTableModel dtm = new DefaultTableModel(0, 0);
+    String[] headers = new String[]{ "Username", "Password" };
+
+    dtm.setColumnIdentifiers(headers);
+    tbl.setModel(dtm);
+
+    Iterator<User> iterator = allUsers.iterator();
+
+    while (iterator.hasNext()){
+        user = iterator.next();
+        if(user != null){
+            dtm.addRow(new String[]{user.getUsername(), user.getPassword()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+        }
+    }
+    if (!allTools.isEmpty()) {
+        /*tbl.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tbl.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tbl.getColumnModel().getColumn(3).setPreferredWidth(200);*/
+
+        tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+        JOptionPane.showMessageDialog(null, tbl, "User List", JOptionPane.INFORMATION_MESSAGE);
+    }
+}
     public void addTool(){
         String toolType, toolManufacturer, toolDesc, toolRateAsString;
         float toolRate;
@@ -192,8 +276,6 @@ public class MainMenu extends JFrame{
         DefaultTableModel dtm = new DefaultTableModel(0, 0);
         String[] headers = new String[]{ "Tool ID", "Tool Type", "Manufacturer", "Description", "Rate", "Status" };
 
-        //int longestToolType = 0, longestManufacturer =0, longestDescription=0;
-
         dtm.setColumnIdentifiers(headers);
         tbl.setModel(dtm);
 
@@ -202,24 +284,13 @@ public class MainMenu extends JFrame{
         while (iterator.hasNext()){
             tool = iterator.next();
             if(tool != null){
-                /*if (tool.getToolType().length() > longestToolType){
-                    longestToolType = tool.getToolType().length();
-                }
-
-                if (tool.getToolType().length() > longestManufacturer){
-                    longestManufacturer = tool.getToolType().length();
-                }
-
-                if (tool.getToolType().length() > longestDescription){
-                    longestDescription = tool.getToolType().length();
-                }*/
                 dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
             }
         }
         if (!allTools.isEmpty()) {
-            /*tbl.getColumnModel().getColumn(1).setPreferredWidth(longestToolType);
-            tbl.getColumnModel().getColumn(2).setPreferredWidth(longestManufacturer);
-            tbl.getColumnModel().getColumn(3).setPreferredWidth(longestDescription);*/
+            tbl.getColumnModel().getColumn(1).setPreferredWidth(100);
+            tbl.getColumnModel().getColumn(2).setPreferredWidth(100);
+            tbl.getColumnModel().getColumn(3).setPreferredWidth(200);
 
             tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
             JOptionPane.showMessageDialog(null, tbl, "Tool List", JOptionPane.INFORMATION_MESSAGE);
@@ -325,7 +396,7 @@ public class MainMenu extends JFrame{
     }
 
     public static void main(String[] args) {
-        new MainMenu();
+        new MainMenu(null);
     }
 
     public void addTestTools(){
@@ -339,6 +410,42 @@ public class MainMenu extends JFrame{
 
     //Validation Methods Start Here:
     //*****************************
+
+    public boolean isvalidUserName(String username, ArrayList<User> allUsers){
+        boolean result = false;
+            if (!username.isEmpty()){
+                for (User user : allUsers){
+                    if (user.getUsername().equals(username)){
+                        result = false;
+                        break;
+                    }
+                    else result = true;
+                }
+            }
+            else {
+                result = false;
+                JOptionPane.showMessageDialog(null, "A username was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        return result;
+    }
+
+    public boolean isValidPass(String password){
+        boolean result = false;
+        if (!password.isEmpty()){
+            if (password.length() >= 5){
+                result = true;
+            }
+            else {
+                result = false;
+                JOptionPane.showMessageDialog(null, "Password must be at least 5 characters long", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "A password was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
 
     public boolean isValidToolType(String toolType){
         boolean result = false;

@@ -17,7 +17,6 @@ public class AmendTool extends JFrame {
     public AmendTool(Tool toolToAmend){
         setContentPane(panel1);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
         Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
         Dimension size = toolkit.getScreenSize();
