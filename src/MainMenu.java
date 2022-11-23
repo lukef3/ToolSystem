@@ -1,13 +1,17 @@
+import SnakeGame.Snake;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MainMenu extends JFrame{
 
     private JPanel panel1;
-    JMenu fileMenu, toolsMenu, rentMenu;
+    private JButton feelingBoredButton;
+    JMenu fileMenu, toolsMenu, rentMenu, adminMenu;
     JMenuItem item=null;
     ArrayList<Tool> allTools = new ArrayList<>();
     ArrayList<Rental> allRentals = new ArrayList<>();
@@ -15,27 +19,39 @@ public class MainMenu extends JFrame{
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
         Font f = new Font("sans-serif", Font.PLAIN, 17);
         UIManager.put("MenuItem.font", f);
-        UIManager.put("Menu.font", f);                                  https://stackoverflow.com/questions/41364080/swing-change-menu-bar-and-menu-items-font-size-in-runtime
+        UIManager.put("Menu.font", f);                                  //https://stackoverflow.com/questions/41364080/swing-change-menu-bar-and-menu-items-font-size-in-runtime
         setContentPane(panel1);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
-        setLocationRelativeTo(null);
+        Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
+        Dimension size = toolkit.getScreenSize();
+        setLocation(size.width/4 - getWidth()/2, size.height/2 - getHeight()/2);
 
         createFileMenu();
         createToolsMenu();
         createRentMenu();
+        createAdminMenu();
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         menuBar.add(fileMenu);
         menuBar.add(toolsMenu);
         menuBar.add(rentMenu);
+        menuBar.add(adminMenu);
 
         addTestTools();
 
         setSize(800,600);
         setVisible(true);
+        feelingBoredButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EventQueue.invokeLater(() -> {
+                    JFrame ex = new Snake();
+                    ex.setVisible(true);
+                });
+            }
+        });
     }
 
     private void createFileMenu(){
@@ -78,6 +94,12 @@ public class MainMenu extends JFrame{
             rentMenu.add(item);
         }
     }
+    private void createAdminMenu(){
+
+        adminMenu = new JMenu("Admin");
+
+        adminMenu.add("View Stats");
+    }
 
     public void actionPerformed(ActionEvent e) {
         int choice;
@@ -119,30 +141,34 @@ public class MainMenu extends JFrame{
     }
 
     public void addTool(){
-        String toolType, toolManufacturer, toolDesc;
+        String toolType, toolManufacturer, toolDesc, toolRateAsString;
         float toolRate;
 
         toolType = JOptionPane.showInputDialog("Please enter the type of tool:");
         if (toolType != null){
-            if (!toolType.isEmpty()){
+            while (!isValidToolType(toolType)) {
+                toolType = JOptionPane.showInputDialog("Please enter the type of tool:");
+            }
                 toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
                 if (toolManufacturer != null){
                     if (!toolManufacturer.isEmpty()){
                         toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
                         if (toolDesc != null){
                             if (!toolDesc.isEmpty()){
-                                toolRate = Float.parseFloat(JOptionPane.showInputDialog("Please enter the tool rate:"));
-                                if (toolRate != 0){
-                                    Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
-                                    allTools.add(tool);
-                                    JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+                                toolRateAsString = JOptionPane.showInputDialog("Please enter the tool rate:");
+                                if (toolRateAsString != null){
+                                    if (!toolRateAsString.isEmpty()){
+                                        toolRate = Float.parseFloat(toolRateAsString);
+                                        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+                                        allTools.add(tool);
+                                        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            else JOptionPane.showMessageDialog(null, "Please enter the type of tool:", "No tool type entered", JOptionPane.ERROR_MESSAGE);
         }
 
         /*toolType = JOptionPane.showInputDialog("Please enter the type of tool:");
@@ -153,7 +179,6 @@ public class MainMenu extends JFrame{
         Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
         allTools.add(tool);
         JOptionPane.showMessageDialog(null, "Tool has been added to the system!");*/
-    }
 
     public void viewTools(ArrayList<Tool> allTools){
 
@@ -272,4 +297,30 @@ public class MainMenu extends JFrame{
         allTools.add(t2);
         allTools.add(t3);
     }
+
+    //Validation Methods Start Here:
+    //*****************************
+
+    public boolean isValidToolType(String toolType){
+        boolean result = false;
+
+        if (!toolType.isEmpty()){
+            for (int i = 0; i < toolType.length(); i++){
+                if (!Character.isLetter(toolType.charAt(i))){
+                    result = false;
+                    JOptionPane.showMessageDialog(null, "Invalid text entered", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                else result = true;
+            }
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "A tool type was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
+        return result;
+    }
+
 }

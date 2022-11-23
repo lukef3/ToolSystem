@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ public class Rent extends JFrame{
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
-        setLocationRelativeTo(null);
+        Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
+        Dimension size = toolkit.getScreenSize();
+        setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 
         setSize(600,350);
         setVisible(true);
@@ -26,7 +29,7 @@ public class Rent extends JFrame{
         ArrayList<Tool> rentableTools = getRentableTools(allTools);
 
         for (int i = 0; i < rentableTools.size(); i++){
-            toolComboBox.addItem(rentableTools.get(i).getId() + " - " + rentableTools.get(i).getToolType() + " - " + rentableTools.get(i).getToolManufacturer());
+            toolComboBox.addItem(rentableTools.get(i).getId() + "   -----    " + rentableTools.get(i).getToolManufacturer() + ", " + rentableTools.get(i).getToolType());
         }
 
         doneButton.addActionListener(new ActionListener() {
@@ -51,15 +54,15 @@ public class Rent extends JFrame{
     }
 
     public int getToolIDFromComboBox(String comboBoxString){
-        String ID = "";
+        StringBuilder ID = new StringBuilder();
 
         for (int i = 0; i < 4; i++){
             if (Character.isDigit(comboBoxString.charAt(i))){
-                ID += comboBoxString.charAt(i);
+                ID.append(comboBoxString.charAt(i));
             }
         }
 
-        return Integer.parseInt(ID);
+        return Integer.parseInt(ID.toString());
     }
 
     public void updateRentableItems(ArrayList<Tool> allTools){
