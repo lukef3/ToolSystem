@@ -61,7 +61,6 @@ public class Tool {
         return toolStatus;
     }
 
-    @Override
     public String toString() {
         return "Tool ID: " + getId() + "\nTool Type: " + getToolType() + "\nTool Manufacturer: " + getToolManufacturer() +
                 "\nTool Description: " + getToolDesc() + "\nTool Rate: €" + getToolRate() + "\nTool Status: " + getToolStatus();

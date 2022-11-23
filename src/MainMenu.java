@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class MainMenu extends JFrame{
@@ -11,6 +10,7 @@ public class MainMenu extends JFrame{
     JMenu fileMenu, toolsMenu, rentMenu;
     JMenuItem item=null;
     ArrayList<Tool> allTools = new ArrayList<>();
+    ArrayList<Rental> allRentals = new ArrayList<>();
     public MainMenu(){
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
         Font f = new Font("sans-serif", Font.PLAIN, 17);
@@ -108,16 +108,14 @@ public class MainMenu extends JFrame{
 
 
         else if(e.getActionCommand().equals("Add Rental"))
-            JOptionPane.showMessageDialog(null,"Adding rental...",
-                    "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+            addRental(allTools, allRentals);
 
         else if(e.getActionCommand().equals("Return Rental"))
             JOptionPane.showMessageDialog(null,"Returning rental...",
-                    "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+                    "Return Rental",JOptionPane.INFORMATION_MESSAGE);
 
         else if(e.getActionCommand().equals("View Rentals"))
-            JOptionPane.showMessageDialog(null,"Viewing rentals...",
-                    "Add Rental",JOptionPane.INFORMATION_MESSAGE);
+            viewRentals(allRentals);
     }
 
     public void addTool(){
@@ -237,6 +235,29 @@ public class MainMenu extends JFrame{
         }
         else
             JOptionPane.showMessageDialog(null, "No matches found", "Search results", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void addRental(ArrayList<Tool> allTools, ArrayList<Rental> allRentals){
+
+        new Rent(allTools, allRentals);
+    }
+    public void viewRentals(ArrayList<Rental> allRentals){
+
+        StringBuilder allToolData = new StringBuilder();
+        Rental rental;
+
+        Iterator<Rental> iterator = allRentals.iterator();
+
+        while (iterator.hasNext()){
+            rental = iterator.next();
+            if(rental != null){
+                allToolData.append(rental).append("\n\n");
+            }
+        }
+        if (!allRentals.isEmpty()) {
+            JOptionPane.showMessageDialog(null, allToolData.toString(), "Rental List", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else JOptionPane.showMessageDialog(null, "There are no rentals recorded on the system");
     }
 
     public static void main(String[] args) {
