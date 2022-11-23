@@ -1,6 +1,7 @@
 import SnakeGame.Snake;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -151,19 +152,22 @@ public class MainMenu extends JFrame{
             }
                 toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
                 if (toolManufacturer != null){
-                    if (!toolManufacturer.isEmpty()){
-                        toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
-                        if (toolDesc != null){
-                            if (!toolDesc.isEmpty()){
-                                toolRateAsString = JOptionPane.showInputDialog("Please enter the tool rate:");
-                                if (toolRateAsString != null){
-                                    if (!toolRateAsString.isEmpty()){
-                                        toolRate = Float.parseFloat(toolRateAsString);
-                                        Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
-                                        allTools.add(tool);
-                                        JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
-                                    }
-                                }
+                    while (!isValidManufacturer(toolManufacturer)) {
+                        toolManufacturer = JOptionPane.showInputDialog("Please enter the manufacturer of the tool:");
+                    }
+                    toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+                    if (toolDesc != null){
+                        while (!isValidDescription(toolDesc)) {
+                            toolDesc = JOptionPane.showInputDialog("Please enter the tool's description");
+                        }
+
+                        toolRateAsString = JOptionPane.showInputDialog("Please enter the tool rate:");
+                        if (toolRateAsString != null){
+                            if (!toolRateAsString.isEmpty()){
+                                toolRate = Float.parseFloat(toolRateAsString);
+                                Tool tool = new Tool(toolType, toolManufacturer, toolRate, toolDesc);
+                                allTools.add(tool);
+                                JOptionPane.showMessageDialog(null, "Tool has been added to the system!");
                             }
                         }
                     }
@@ -182,24 +186,55 @@ public class MainMenu extends JFrame{
 
     public void viewTools(ArrayList<Tool> allTools){
 
-        StringBuilder allToolData = new StringBuilder();
         Tool tool;
+
+        JTable tbl = new JTable();
+        DefaultTableModel dtm = new DefaultTableModel(0, 0);
+        String[] headers = new String[]{ "Tool ID", "Tool Type", "Manufacturer", "Description", "Rate", "Status" };
+
+        //int longestToolType = 0, longestManufacturer =0, longestDescription=0;
+
+        dtm.setColumnIdentifiers(headers);
+        tbl.setModel(dtm);
 
         Iterator<Tool> iterator = allTools.iterator();
 
         while (iterator.hasNext()){
             tool = iterator.next();
             if(tool != null){
-                allToolData.append(tool).append("\n\n");
+                /*if (tool.getToolType().length() > longestToolType){
+                    longestToolType = tool.getToolType().length();
+                }
+
+                if (tool.getToolType().length() > longestManufacturer){
+                    longestManufacturer = tool.getToolType().length();
+                }
+
+                if (tool.getToolType().length() > longestDescription){
+                    longestDescription = tool.getToolType().length();
+                }*/
+                dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
             }
         }
         if (!allTools.isEmpty()) {
-            JOptionPane.showMessageDialog(null, allToolData.toString(), "Tool List", JOptionPane.INFORMATION_MESSAGE);
+            /*tbl.getColumnModel().getColumn(1).setPreferredWidth(longestToolType);
+            tbl.getColumnModel().getColumn(2).setPreferredWidth(longestManufacturer);
+            tbl.getColumnModel().getColumn(3).setPreferredWidth(longestDescription);*/
+
+            tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+            JOptionPane.showMessageDialog(null, tbl, "Tool List", JOptionPane.INFORMATION_MESSAGE);
         }
         else
             JOptionPane.showMessageDialog(null, "There are currently no tools recorded on the system.", "Tool List", JOptionPane.INFORMATION_MESSAGE);
     }
     public void amendTool(ArrayList<Tool> allTools) {
+        JTable tbl = new JTable();
+        DefaultTableModel dtm = new DefaultTableModel(0, 0);
+        String[] headers = new String[]{ "Tool ID", "Tool Type", "Manufacturer", "Description", "Rate", "Status" };
+
+        dtm.setColumnIdentifiers(headers);
+        tbl.setModel(dtm);
+
         ArrayList<Tool> amendableTools = new ArrayList<>();
         for (Tool tool : allTools) {
             if (tool.getToolStatus().equals("IN")||tool.getToolStatus().equals("UNAVAILABLE")) {
@@ -210,23 +245,27 @@ public class MainMenu extends JFrame{
         StringBuilder searchResults = new StringBuilder();
 
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
-        for(Tool tool: amendableTools){
-            if(tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
-                searchResults.append(tool).append("\n");
-            }
-        }
-        if (!searchResults.isEmpty()) {
-            int searchID = Integer.parseInt(JOptionPane.showInputDialog("The following tools match your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish the amend."));
-            Tool toolToAmend;
+        if (search != null) {
             for (Tool tool : amendableTools) {
-                if (tool.getId() == searchID) {
-                    toolToAmend = tool;
-                    new AmendTool(toolToAmend);
+                if (tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                    searchResults.append(tool).append("\n");
+                    dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
                 }
             }
+            if (!searchResults.isEmpty()) {
+                tbl.setEnabled(false);
+                int searchID = Integer.parseInt(JOptionPane.showInputDialog(null, tbl, "Search Results", JOptionPane.PLAIN_MESSAGE));
+                Tool toolToAmend;
+                for (Tool tool : amendableTools) {
+                    if (tool.getId() == searchID) {
+                        toolToAmend = tool;
+                        new AmendTool(toolToAmend);
+                    }
+                }
+            }
+            else
+                JOptionPane.showMessageDialog(null, "No matches found", "Search results", JOptionPane.INFORMATION_MESSAGE);
         }
-        else
-            JOptionPane.showMessageDialog(null, "No matches found", "Search results", JOptionPane.INFORMATION_MESSAGE);
     }
     public void removeTool(ArrayList<Tool> allTools){
         ArrayList<Tool> removableTools = new ArrayList<>();
@@ -318,8 +357,37 @@ public class MainMenu extends JFrame{
             result = false;
             JOptionPane.showMessageDialog(null, "A tool type was not entered", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        return result;
+    }
 
+    public boolean isValidManufacturer(String manufacturer){
+        boolean result;
+        if (!manufacturer.isEmpty()){
+            result = true;
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Tool manufacturer was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
+        return result;
+    }
+
+    public boolean isValidDescription(String description){
+        boolean result;
+        if (!description.isEmpty()){
+            if (description.length() <= 20){
+                result = true;
+            }
+            else {
+                result = false;
+                JOptionPane.showMessageDialog(null, "Tool description must not exceed 20 characters", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Tool description was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         return result;
     }
 
