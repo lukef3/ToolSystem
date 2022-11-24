@@ -192,25 +192,45 @@ public class MainMenu extends JFrame{
     }
 
     public void addUser(ArrayList<User> allUsers){
-            String username, password;
+        String username, password;
 
-            username = JOptionPane.showInputDialog("Please enter a username");
-                if (username!=null){
-                    while (!isvalidUserName(username, allUsers)){
-                        username = JOptionPane.showInputDialog("Please enter a username");
-                    }
-                    password = JOptionPane.showInputDialog("Please enter a password");
-                    if (password!=null){
-                        while (!isValidPass(password)){
-                            password = JOptionPane.showInputDialog("Please enter a password");
-                        }
-                        User user = new User(username, password);
-                        allUsers.add(user);
-                        JOptionPane.showMessageDialog(null, "\"" + username + "\" has been added to the system users");
-                        updateUsers();
-                    }
+        /*int lastHighestID = 0;
+        for (User user : allUsers){
+            if (user.getID() > lastHighestID){
+                lastHighestID = user.getID();
+                User.setCounter(lastHighestID);
+            }
+        }
 
+        Iterator<User> iterator = allUsers.iterator();
+        User user;
+        boolean b = iterator.hasNext();
+        while (b){
+            user = iterator.next();
+                if (user.getID() > lastHighestID){
+                    lastHighestID = user.getID();
+                    User.setCounter(lastHighestID);
+                    b = false;
                 }
+        }*/
+
+        username = JOptionPane.showInputDialog("Please enter a username");
+            if (username!=null){
+                while (!isvalidUserName(username, allUsers)){
+                    username = JOptionPane.showInputDialog("Please enter a username");
+                }
+                password = JOptionPane.showInputDialog("Please enter a password");
+                if (password!=null){
+                    while (!isValidPass(password)){
+                        password = JOptionPane.showInputDialog("Please enter a password");
+                    }
+                    User user1 = new User(username, password);
+                    allUsers.add(user1);
+                    JOptionPane.showMessageDialog(null, "\"" + username + "\" has been added to the system users");
+                    updateUsers();
+                }
+
+            }
     }
     public void removeUser(ArrayList<User> allUsers){
         User user;
@@ -291,7 +311,7 @@ public class MainMenu extends JFrame{
     public void updateUsers(){
         try {
             File file = new File("Users.data");
-            file.delete();
+            file.delete();                                                  //https://www.w3schools.com/java/java_files_delete.asp
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("Users.data"));
             objectOutputStream.writeObject(this.allUsers);
             objectOutputStream.close();
@@ -305,13 +325,6 @@ public class MainMenu extends JFrame{
         float toolRate;
 
         String[] toolTypeOptions = {"Drill", "Cement Mixer", "Sander", "Rotavator", "Ladder", "Floor Saw", "Digger", "Welder", "Compactor"};
-        int lastHighestID = 0;
-        for (User user : allUsers){
-            if (user.getID() > lastHighestID){
-                lastHighestID = user.getID();
-                User.setCounter(lastHighestID);
-            }
-        }
 
         toolType = (String) JOptionPane.showInputDialog(null, "Please select the type of tool:", "Tool Type", JOptionPane.QUESTION_MESSAGE, null, toolTypeOptions, toolTypeOptions[1]);
         if (toolType != null){
@@ -560,7 +573,6 @@ public class MainMenu extends JFrame{
             else {
                 JOptionPane.showMessageDialog(null, "A username was not entered", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            result = true;
         return result;
     }
 
