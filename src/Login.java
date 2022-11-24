@@ -20,17 +20,11 @@ public class Login extends JFrame{
         setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());    //https://www.youtube.com/watch?v=cKmr-9Wc2u4
         setVisible(true);
+
+        setSize(300, 400);
         Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
-
-        setSize(300, 400);
-
-        User test = new User("test", "test");
-        allUsers.add(test);
-
-        User johnTest = new User("JohnBrosnan", "password");
-        allUsers.add(johnTest);
 
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -55,10 +49,14 @@ public class Login extends JFrame{
     }
 
     private boolean validLogin() {
-        boolean result = true, containsUsername = false, containsPassword = false;
+        boolean result = false, containsUsername = false, containsPassword = false;
         String password = String.valueOf(txtPassword.getPassword());  //https://stackoverflow.com/questions/14162225/getting-text-from-password-field
         if (!txtUsername.getText().equals("")){
             if(!password.equals("")){
+                result = true;
+
+                /*      Users function not working
+
                 for (User user : allUsers){
                     if (txtUsername.getText().equals(user.getUsername())){
                         containsUsername = true;
@@ -83,7 +81,7 @@ public class Login extends JFrame{
                 else {
                     result = false;
                     JOptionPane.showMessageDialog(null, "Invalid Username", "Invalid", JOptionPane.ERROR_MESSAGE);
-                }
+                }*/
             }
             else{
                 result = false;
@@ -95,15 +93,10 @@ public class Login extends JFrame{
             JOptionPane.showMessageDialog(null, "You must enter a username!", "Invalid", JOptionPane.ERROR_MESSAGE);
         }
 
-       // if(txtUsername.getText().equals(""));
         return result;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {            //test run
         new Login();
-    }
-
-    public void test() {
-
     }
 }

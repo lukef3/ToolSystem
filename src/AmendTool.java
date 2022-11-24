@@ -18,12 +18,12 @@ public class AmendTool extends JFrame {
         setContentPane(panel1);
         setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
+        setSize(500,500);
         Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 
         setVisible(true);
-        setSize(500,500);
 
         statusComboBox.addItem("IN");
         statusComboBox.addItem("UNAVAILABLE");
@@ -57,7 +57,7 @@ public class AmendTool extends JFrame {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {        //test run
         new AmendTool(null);
     }
 }

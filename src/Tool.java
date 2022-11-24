@@ -1,4 +1,6 @@
-public class Tool {
+import java.io.Serializable;
+
+public class Tool implements Serializable {
     private int id;
     private String toolType;
     private String toolManufacturer;
