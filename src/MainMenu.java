@@ -5,10 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -20,8 +17,10 @@ public class MainMenu extends JFrame{
     JMenuItem item=null, addUser, amendUser, removeUser, viewUsers;
     ArrayList<Tool> allTools = new ArrayList<>();
     ArrayList<Rental> allRentals = new ArrayList<>();
+    ArrayList<User> allUsers = new ArrayList<>();
 
-    public MainMenu(ArrayList<User> allUsers){
+
+    public MainMenu(){
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
         Font f = new Font("sans-serif", Font.PLAIN, 17);
         UIManager.put("MenuItem.font", f);
@@ -35,6 +34,13 @@ public class MainMenu extends JFrame{
         Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
+
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Users.data"));
+            this.allUsers = (ArrayList<User>) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Error in retrieving user data", "", JOptionPane.ERROR_MESSAGE);
+        }
 
         createFileMenu();
         createToolsMenu();
@@ -99,13 +105,13 @@ public class MainMenu extends JFrame{
 
         fileMenu = new JMenu("File");
 
-        String[] itemNames = {"New","Open","Save", "Log Out", "Exit System"};
+        String[] itemNames = {"Log Out", "Exit System"};
 
         for(int i=0;i<itemNames.length;i++){
             item = new JMenuItem(itemNames[i]);
             item.addActionListener(this::actionPerformed);
 
-            if(i==3)
+            if(i==1)
                 fileMenu.addSeparator();
 
             fileMenu.add(item);
@@ -138,19 +144,7 @@ public class MainMenu extends JFrame{
 
     public void actionPerformed(ActionEvent e) {
         int choice;
-        if(e.getActionCommand().equals("New"))
-            JOptionPane.showMessageDialog(null,"New");
-        else if(e.getActionCommand().equals("Open"))
-            JOptionPane.showMessageDialog(null,"New");
-        else if(e.getActionCommand().equals("Save")) {
-            try {
-                save();
-                JOptionPane.showMessageDialog(null,"Tools have been saved successfully");
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "An error has occurred - file not saved");
-            }
-        }
-        else if(e.getActionCommand().equals("Exit System")) {
+        if(e.getActionCommand().equals("Exit System")) {
             choice = JOptionPane.showConfirmDialog(null, "Are you sure you wish to exit the system?",
                     "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
             if(choice==JOptionPane.YES_OPTION){
@@ -165,7 +159,11 @@ public class MainMenu extends JFrame{
             if(choice==JOptionPane.YES_OPTION){
                 JOptionPane.showMessageDialog(null,"Logging out...",
                         "",JOptionPane.INFORMATION_MESSAGE);
-                new Login();
+                try {
+                    new Login();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 dispose();
             }
         }
@@ -178,7 +176,6 @@ public class MainMenu extends JFrame{
             removeTool(allTools);
         else if(e.getActionCommand().equals("View"))
             viewTools(allTools);
-
 
         else if(e.getActionCommand().equals("Add Rental"))
             if (!allTools.isEmpty()) {
@@ -194,19 +191,8 @@ public class MainMenu extends JFrame{
 
     }
 
-    public void save() throws IOException {
-        try{
-            ObjectOutputStream toolOutStream = new ObjectOutputStream(new FileOutputStream("Tools.data"));
-            toolOutStream.writeObject(this.allTools);
-            toolOutStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void addUser(ArrayList<User> allUsers){
-            JOptionPane.showMessageDialog(null, "Feature is currently down for maintenance");
-            /*String username, password;
+            String username, password;
 
             username = JOptionPane.showInputDialog("Please enter a username");
                 if (username!=null){
@@ -218,44 +204,100 @@ public class MainMenu extends JFrame{
                         while (!isValidPass(password)){
                             password = JOptionPane.showInputDialog("Please enter a password");
                         }
+                        User user = new User(username, password);
+                        allUsers.add(user);
+                        JOptionPane.showMessageDialog(null, "\"" + username + "\" has been added to the system users");
+                        updateUsers();
                     }
-                    User user = new User(username, password);
-                    allUsers.add(user);
-                }*/
+
+                }
     }
     public void removeUser(ArrayList<User> allUsers){
-            JOptionPane.showMessageDialog(null, "Feature is currently down for maintenance");
-        }
-    public void viewUsers(ArrayList<User> allUsers){
-        JOptionPane.showMessageDialog(null, "Feature is currently down for maintenance");
-
-        /*      Users function not working
-
         User user;
 
         JTable tbl = new JTable();
         DefaultTableModel dtm = new DefaultTableModel(0, 0);
-        String[] headers = new String[]{ "Username", "Password" };
+        String[] headers = new String[]{"User ID", "Username", "Password" };
 
         dtm.setColumnIdentifiers(headers);
         tbl.setModel(dtm);
+
+        JScrollPane pane = new JScrollPane(tbl);
 
         Iterator<User> iterator = allUsers.iterator();
 
         while (iterator.hasNext()){
             user = iterator.next();
             if(user != null){
-                dtm.addRow(new String[]{user.getUsername(), user.getPassword()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+                dtm.addRow(new String[]{String.valueOf(user.getID()),user.getUsername(), user.getPassword()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
             }
         }
         if (!allUsers.isEmpty()) {
-            tbl.getColumnModel().getColumn(1).setPreferredWidth(100);
-            tbl.getColumnModel().getColumn(2).setPreferredWidth(100);
-            tbl.getColumnModel().getColumn(3).setPreferredWidth(200);
-
             tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
-            JOptionPane.showMessageDialog(null, tbl, "User List", JOptionPane.INFORMATION_MESSAGE);
-        }*/
+            String removeIDAsString;
+            removeIDAsString = JOptionPane.showInputDialog(null, pane, "Enter the user ID of the user you wish to remove");
+            if (removeIDAsString !=null){
+                while (!isValidSearchID(removeIDAsString)){
+                    removeIDAsString = JOptionPane.showInputDialog(null, pane, "Enter the user ID of the user you wish to remove");
+                }
+                int removeID = Integer.parseInt(removeIDAsString);
+
+                User userToRemove = null;
+                for (User user1 : allUsers){
+                    if (user1.getID() == removeID){
+                        userToRemove = user1;
+                    }
+                }
+
+                int choice = JOptionPane.showConfirmDialog(null, "The details of your selected user are:" + "\n\n" + userToRemove + "\n\nAre you sure you wish to remove this user?");
+                if (choice == JOptionPane.YES_OPTION) {
+                    allUsers.remove(userToRemove);
+                    updateUsers();
+                    JOptionPane.showMessageDialog(null, "The user has been removed from the system.", "Confirmation", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            }
+        }
+    }
+    public void viewUsers(ArrayList<User> allUsers){
+        User user;
+
+        JTable tbl = new JTable();
+        DefaultTableModel dtm = new DefaultTableModel(0, 0);
+        String[] headers = new String[]{"User ID", "Username", "Password" };
+
+        dtm.setColumnIdentifiers(headers);
+        tbl.setModel(dtm);
+
+        JScrollPane pane = new JScrollPane(tbl);
+
+        Iterator<User> iterator = allUsers.iterator();
+
+        while (iterator.hasNext()){
+            user = iterator.next();
+            if(user != null){
+                dtm.addRow(new String[]{String.valueOf(user.getID()),user.getUsername(), user.getPassword()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+            }
+        }
+        if (!allUsers.isEmpty()) {
+            tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+            JOptionPane.showMessageDialog(null, pane, "User List", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "There are no users on the system");
+        }
+    }
+
+    public void updateUsers(){
+        try {
+            File file = new File("Users.data");
+            file.delete();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("Users.data"));
+            objectOutputStream.writeObject(this.allUsers);
+            objectOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void addTool(){
@@ -263,6 +305,13 @@ public class MainMenu extends JFrame{
         float toolRate;
 
         String[] toolTypeOptions = {"Drill", "Cement Mixer", "Sander", "Rotavator", "Ladder", "Floor Saw", "Digger", "Welder", "Compactor"};
+        int lastHighestID = 0;
+        for (User user : allUsers){
+            if (user.getID() > lastHighestID){
+                lastHighestID = user.getID();
+                User.setCounter(lastHighestID);
+            }
+        }
 
         toolType = (String) JOptionPane.showInputDialog(null, "Please select the type of tool:", "Tool Type", JOptionPane.QUESTION_MESSAGE, null, toolTypeOptions, toolTypeOptions[1]);
         if (toolType != null){
@@ -335,17 +384,17 @@ public class MainMenu extends JFrame{
                 amendableTools.add(tool);
             }
         }
-        StringBuilder searchResults = new StringBuilder();
+        boolean toolsFound = false;
 
-        String search = JOptionPane.showInputDialog("Please enter a search phrase for the tool you wish to amend");
+        String search = JOptionPane.showInputDialog("Please enter a search phrase");
         if (search != null) {
             for (Tool tool : amendableTools) {
-                if (tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
-                    searchResults.append(tool).append("\n");
+                if (tool.getId() == Integer.parseInt(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                    toolsFound = true;
                     dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
                 }
             }
-            if (!searchResults.isEmpty()) {
+            if (toolsFound) {
                 tbl.setEnabled(false);
                 int searchID = 0;
                 String searchIDAsString = JOptionPane.showInputDialog(null, pane, "Enter the tool ID of the tool you wish to amend here");
@@ -380,7 +429,7 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
         if (search!=null) {
             for (Tool tool : removableTools) {
-                if (tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (tool.getId() == Integer.parseInt(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     searchResults.append(tool).append("\n");
                 }
             }
@@ -480,7 +529,7 @@ public class MainMenu extends JFrame{
 
 
     public static void main(String[] args) {
-        new MainMenu(null);     //test run
+        new MainMenu();     //test run
     }
 
     public void addTestTools(){
@@ -502,6 +551,7 @@ public class MainMenu extends JFrame{
                 for (User user : allUsers){
                     if (user.getUsername().equals(username)){
                         result = false;
+                        JOptionPane.showMessageDialog(null, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
                         break;
                     }
                     else result = true;
@@ -510,6 +560,7 @@ public class MainMenu extends JFrame{
             else {
                 JOptionPane.showMessageDialog(null, "A username was not entered", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            result = true;
         return result;
     }
 

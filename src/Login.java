@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Login extends JFrame{
@@ -14,7 +15,7 @@ public class Login extends JFrame{
 
     ArrayList<User> allUsers = new ArrayList<>();
 
-    public Login() {
+    public Login() throws IOException {
         setContentPane(panel1);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -26,6 +27,19 @@ public class Login extends JFrame{
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Users.data"));
+            this.allUsers = (ArrayList<User>) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Error in retrieving user data", "", JOptionPane.ERROR_MESSAGE);
+        }
+
+        User admin = new User("admin", "admin");            //Hard Coded user details for testing
+        allUsers.add(admin);
+
+        txtUsername.setText(admin.getUsername());
+        txtPassword.setText(admin.getPassword());
+
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -34,7 +48,7 @@ public class Login extends JFrame{
                     txtUsername.setText("");
                     txtPassword.setText("");
                     dispose();
-                    new MainMenu(allUsers);
+                    new MainMenu();
                 }
             }
         });
@@ -49,14 +63,10 @@ public class Login extends JFrame{
     }
 
     private boolean validLogin() {
-        boolean result = false, containsUsername = false, containsPassword = false;
+        boolean result, containsUsername = false, containsPassword = false;
         String password = String.valueOf(txtPassword.getPassword());  //https://stackoverflow.com/questions/14162225/getting-text-from-password-field
-        if (!txtUsername.getText().equals("")){
+        if (!txtUsername.getText().isEmpty()){
             if(!password.equals("")){
-                result = true;
-
-                /*      Users function not working
-
                 for (User user : allUsers){
                     if (txtUsername.getText().equals(user.getUsername())){
                         containsUsername = true;
@@ -81,7 +91,7 @@ public class Login extends JFrame{
                 else {
                     result = false;
                     JOptionPane.showMessageDialog(null, "Invalid Username", "Invalid", JOptionPane.ERROR_MESSAGE);
-                }*/
+                }
             }
             else{
                 result = false;
@@ -97,6 +107,10 @@ public class Login extends JFrame{
     }
 
     public static void main(String[] args) {            //test run
-        new Login();
+        try {
+            new Login();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
