@@ -14,7 +14,7 @@ public class MainMenu extends JFrame{
     private JPanel panel1;
     private JButton feelingBoredButton;
     JMenu fileMenu, toolsMenu, rentMenu, userMenu;
-    JMenuItem item=null, addUser, amendUser, removeUser, viewUsers;
+    JMenuItem item=null, addUser, removeUser, viewUsers;
     ArrayList<Tool> allTools = new ArrayList<>();
     ArrayList<Rental> allRentals = new ArrayList<>();
     ArrayList<User> allUsers = new ArrayList<>();
@@ -55,13 +55,6 @@ public class MainMenu extends JFrame{
             }
         });
 
-        amendUser = new JMenuItem("Amend User");
-        amendUser.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addUser(allUsers);
-            }
-        });
-
         removeUser = new JMenuItem("Remove User");
         removeUser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -77,7 +70,6 @@ public class MainMenu extends JFrame{
         });
 
         userMenu.add(addUser);
-        userMenu.add(amendUser);
         userMenu.add(removeUser);
         userMenu.add(viewUsers);
 
@@ -162,7 +154,7 @@ public class MainMenu extends JFrame{
                 try {
                     new Login();
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null, "Error in starting login menu");
                 }
                 dispose();
             }
@@ -194,14 +186,14 @@ public class MainMenu extends JFrame{
     public void addUser(ArrayList<User> allUsers){
         String username, password;
 
-        /*int lastHighestID = 0;
-        for (User user : allUsers){
+
+        /*for (User user : allUsers){
             if (user.getID() > lastHighestID){
                 lastHighestID = user.getID();
                 User.setCounter(lastHighestID);
             }
-        }
-
+        }*/
+        int lastHighestID = 0;
         Iterator<User> iterator = allUsers.iterator();
         User user;
         boolean b = iterator.hasNext();
@@ -212,6 +204,17 @@ public class MainMenu extends JFrame{
                     User.setCounter(lastHighestID);
                     b = false;
                 }
+        }
+        /*Iterator<User> iterator = allUsers.iterator();
+        User user;
+        for (int i = 1; i < allUsers.size(); i++){
+            while (iterator.hasNext()){
+                user = iterator.next();
+                if (i != user.getID()){
+                    User.setCounter(i);
+                    break;
+                }
+            }
         }*/
 
         username = JOptionPane.showInputDialog("Please enter a username");
@@ -278,6 +281,9 @@ public class MainMenu extends JFrame{
 
             }
         }
+        else
+        JOptionPane.showMessageDialog(null, "There are no users on the system");
+
     }
     public void viewUsers(ArrayList<User> allUsers){
         User user;
@@ -316,7 +322,7 @@ public class MainMenu extends JFrame{
             objectOutputStream.writeObject(this.allUsers);
             objectOutputStream.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Error in updating the users file");
         }
     }
 
@@ -402,7 +408,7 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase");
         if (search != null) {
             for (Tool tool : amendableTools) {
-                if (tool.getId() == Integer.parseInt(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     toolsFound = true;
                     dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
                 }
@@ -442,7 +448,7 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
         if (search!=null) {
             for (Tool tool : removableTools) {
-                if (tool.getId() == Integer.parseInt(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     searchResults.append(tool).append("\n");
                 }
             }
@@ -488,7 +494,7 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
         if (search != null){
             for (Tool tool : returnableTools) {
-                if (tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     searchResults.append(tool).append("\n");
                 }
             }
@@ -558,37 +564,33 @@ public class MainMenu extends JFrame{
     //********************Validation Methods***********************
 
 
-    public boolean isvalidUserName(String username, ArrayList<User> allUsers){
+    public boolean isvalidUserName(String username, ArrayList<User> allUsers) {
         boolean result = false;
-            if (!username.isEmpty()){
-                for (User user : allUsers){
-                    if (user.getUsername().equals(username)){
-                        result = false;
-                        JOptionPane.showMessageDialog(null, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
-                        break;
-                    }
-                    else result = true;
+
+        if (!username.isEmpty()) {
+            for (User user : allUsers) {
+                if (user.getUsername().equals(username)) {
+                    JOptionPane.showMessageDialog(null, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
                 }
             }
-            else {
-                JOptionPane.showMessageDialog(null, "A username was not entered", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            result = true;
+        } else {
+            JOptionPane.showMessageDialog(null, "A username was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         return result;
     }
 
     public boolean isValidPass(String password){
-        boolean result;
-        if (!password.isEmpty()){
-            if (password.length() >= 5){
+        boolean result = false;
+        if (!password.isEmpty()) {
+            if (password.length() >= 5) {
                 result = true;
-            }
-            else {
-                result = false;
+            } else {
                 JOptionPane.showMessageDialog(null, "Password must be at least 5 characters long", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        else {
-            result = false;
+        } else {
             JOptionPane.showMessageDialog(null, "A password was not entered", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return result;

@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 public class AmendTool extends JFrame {
     private JTextField IDField;
-    private JTextField toolTypeField;
     private JTextField manufacturerField;
     private JTextField descriptionField;
     private JButton amendButton;
@@ -13,6 +12,7 @@ public class AmendTool extends JFrame {
     private JTextField rateField;
     private JComboBox statusComboBox;
     private JPanel panel1;
+    private JComboBox toolTypeComboBox;
 
     public AmendTool(Tool toolToAmend){
         setContentPane(panel1);
@@ -28,11 +28,17 @@ public class AmendTool extends JFrame {
         statusComboBox.addItem("IN");
         statusComboBox.addItem("UNAVAILABLE");
 
+        String[] toolTypes = {"Drill", "Cement Mixer", "Sander", "Rotavator", "Ladder", "Floor Saw", "Digger", "Welder", "Compactor"};
+        for (int i = 0; i < toolTypes.length; i++){
+            toolTypeComboBox.addItem(toolTypes[i]);
+        }
+
         IDField.setText(String.valueOf(toolToAmend.getId()));
-        toolTypeField.setText(toolToAmend.getToolType());
+        toolTypeComboBox.setSelectedItem(toolToAmend.getToolType());
         manufacturerField.setText(toolToAmend.getToolManufacturer());
         descriptionField.setText(toolToAmend.getToolDesc());
         rateField.setText(String.valueOf(toolToAmend.getToolRate()));
+        statusComboBox.setSelectedItem(toolToAmend.getToolStatus());
 
         if (toolToAmend.getToolStatus().equals("IN")) {
             statusComboBox.setSelectedItem("IN");
@@ -42,12 +48,19 @@ public class AmendTool extends JFrame {
 
         amendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                toolToAmend.setToolType(toolTypeField.getText());
-                toolToAmend.setToolManufacturer(manufacturerField.getText());
-                toolToAmend.setToolDesc(descriptionField.getText());
-                toolToAmend.setToolRate(Float.parseFloat(rateField.getText()));
-                toolToAmend.setToolStatus(statusComboBox.getSelectedItem().toString());
-                dispose();
+
+                if (isValidManu(manufacturerField.getText())) {
+                    if (isValidDesc(descriptionField.getText())) {
+                        if (isValidRate(rateField.getText())) {
+                            toolToAmend.setToolType(String.valueOf(toolTypeComboBox.getSelectedItem()));
+                            toolToAmend.setToolManufacturer(manufacturerField.getText());
+                            toolToAmend.setToolDesc(descriptionField.getText());
+                            toolToAmend.setToolRate(Float.parseFloat(rateField.getText()));
+                            toolToAmend.setToolStatus(statusComboBox.getSelectedItem().toString());
+                            dispose();
+                        }
+                    }
+                }
             }
         });
         cancelButton.addActionListener(new ActionListener() {
@@ -60,5 +73,61 @@ public class AmendTool extends JFrame {
     public static void main(String[] args) {        //test run
         new AmendTool(null);
     }
+
+    //***************Validation************************
+
+    public boolean isValidManu(String manufacturer){
+        boolean result;
+        if (!manufacturer.isEmpty()){
+            result = true;
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Tool manufacturer must be entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return result;
+    }
+
+    public boolean isValidDesc(String description){
+        boolean result;
+        if (!description.isEmpty()){
+            if (description.length() <= 20){
+                result = true;
+            }
+            else {
+                result = false;
+                JOptionPane.showMessageDialog(null, "Tool description must not exceed 20 characters", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Tool description must be entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
+
+    public boolean isValidRate(String rate){
+        boolean result = false;
+
+        if (!rate.isEmpty()){
+            for (int i = 0; i < rate.length(); i++){
+                if (!Character.isDigit(rate.charAt(i))){
+                    result = false;
+                    JOptionPane.showMessageDialog(null, "Invalid Rate", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                else {
+                    result = true;
+                }
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Rate must be entered", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return result;
+    }
+
 }
 

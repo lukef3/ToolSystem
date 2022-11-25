@@ -27,7 +27,6 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <labelFor value="f4a6b"/>
           <text value="Tool Type"/>
         </properties>
       </component>
@@ -75,14 +74,6 @@
         <properties>
           <editable value="false"/>
         </properties>
-      </component>
-      <component id="f4a6b" class="javax.swing.JTextField" binding="toolTypeField">
-        <constraints>
-          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
       </component>
       <component id="5a26" class="javax.swing.JTextField" binding="manufacturerField">
         <constraints>
@@ -178,6 +169,12 @@
           <background color="-14848"/>
           <text value="Amend"/>
         </properties>
+      </component>
+      <component id="f7fd8" class="javax.swing.JComboBox" binding="toolTypeComboBox">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
