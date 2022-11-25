@@ -171,12 +171,17 @@ public class MainMenu extends JFrame{
         else if(e.getActionCommand().equals("Add"))
             addTool();
         else if(e.getActionCommand().equals("Amend"))
-            amendTool(allTools);
+            if (!allTools.isEmpty()){
+                amendTool(allTools);
+            }
+            else JOptionPane.showMessageDialog(null, "There are no tools recorded on the system");
         else if(e.getActionCommand().equals("Remove"))
-            removeTool(allTools);
+            if (!allTools.isEmpty()){
+                removeTool(allTools);
+            }
+            else JOptionPane.showMessageDialog(null, "There are no tools recorded on the system");
         else if(e.getActionCommand().equals("View"))
             viewTools(allTools);
-
         else if(e.getActionCommand().equals("Add Rental"))
             if (!allTools.isEmpty()) {
                 addRental(allTools, allRentals);
@@ -372,7 +377,7 @@ public class MainMenu extends JFrame{
             JOptionPane.showMessageDialog(null, pane, "Tool List", JOptionPane.INFORMATION_MESSAGE);
         }
         else
-            JOptionPane.showMessageDialog(null, "There are currently no tools recorded on the system.", "Tool List", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "There are no tools recorded on the system.", "Tool List", JOptionPane.INFORMATION_MESSAGE);
     }
     public void amendTool(ArrayList<Tool> allTools) {
         JTable tbl = new JTable();
@@ -657,7 +662,7 @@ public class MainMenu extends JFrame{
             for (int i = 0; i < searchID.length(); i++){
                 if (!Character.isDigit(searchID.charAt(i))){
                     result = false;
-                    JOptionPane.showMessageDialog(null, "Invalid Search ID", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Invalid ID", "Error", JOptionPane.ERROR_MESSAGE);
                     break;
                 }
                 else {
@@ -666,7 +671,7 @@ public class MainMenu extends JFrame{
             }
         }
         else {
-            JOptionPane.showMessageDialog(null, "Search ID was not entered", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ID was not entered", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return result;
