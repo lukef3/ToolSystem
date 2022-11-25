@@ -110,9 +110,19 @@ public class AmendTool extends JFrame {
     public boolean isValidRate(String rate){
         boolean result = false;
 
+        int numberOfDecimals = 0;
+
         if (!rate.isEmpty()){
             for (int i = 0; i < rate.length(); i++){
-                if (!Character.isDigit(rate.charAt(i))){
+                if (!Character.isDigit(rate.charAt(i)) && rate.charAt(i) != '.'){
+                    result = false;
+                    JOptionPane.showMessageDialog(null, "Invalid Rate", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                if (rate.charAt(i) == '.'){
+                    numberOfDecimals++;
+                }
+                if (numberOfDecimals > 1){
                     result = false;
                     JOptionPane.showMessageDialog(null, "Invalid Rate", "Error", JOptionPane.ERROR_MESSAGE);
                     break;
