@@ -105,7 +105,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Method the get the details of a User object.
+     * Method to get the details of a User object.
      * @return a String value of all the User object's details.
      */
     @Override
