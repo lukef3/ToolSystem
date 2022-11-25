@@ -1,4 +1,9 @@
-// Snake game code taken from: https://zetcode.com/javagames/snake/
+/*****************************************************
+ * Title: Java Snake
+ * Author: Jan Bodnar
+ * Site owner/sponsor: https://zetcode.com
+ * Availability: https://zetcode.com/javagames/snake/
+ * *****************************************************/
 
 package SnakeGame;
 

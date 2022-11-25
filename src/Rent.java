@@ -20,7 +20,7 @@ public class Rent extends JFrame{
         setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
         setSize(600,350);
-        Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
+        Toolkit toolkit = getToolkit();
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 

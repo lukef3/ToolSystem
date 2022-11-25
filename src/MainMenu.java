@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 public class MainMenu extends JFrame{
@@ -22,16 +23,23 @@ public class MainMenu extends JFrame{
 
     public MainMenu(){
         UIManager.put("MenuItem.selectionBackground", Color.orange);   //https://community.oracle.com/tech/developers/discussion/1369819/color-of-item-selected-in-jmenu
+
+        /*****************************************************
+         * Title: Swing - Change menu bar and menu items font size in runtime
+         * Author: Ulises CT
+         * Site owner/sponsor: stackoverflow.com
+         * Availability: http://https://stackoverflow.com/questions/41364080/swing-change-menu-bar-and-menu-items-font-size-in-runtime
+         * *****************************************************/
         Font f = new Font("sans-serif", Font.PLAIN, 17);
         UIManager.put("MenuItem.font", f);
-        UIManager.put("Menu.font", f);                                  //https://stackoverflow.com/questions/41364080/swing-change-menu-bar-and-menu-items-font-size-in-runtime
+        UIManager.put("Menu.font", f);
         setContentPane(panel1);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
         setSize(600,600);
 
-        Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
+        Toolkit toolkit = getToolkit();
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
 
@@ -186,36 +194,14 @@ public class MainMenu extends JFrame{
     public void addUser(ArrayList<User> allUsers){
         String username, password;
 
-
-        /*for (User user : allUsers){
-            if (user.getID() > lastHighestID){
-                lastHighestID = user.getID();
-                User.setCounter(lastHighestID);
-            }
-        }*/
         int lastHighestID = 0;
-        Iterator<User> iterator = allUsers.iterator();
-        User user;
-        boolean b = iterator.hasNext();
-        while (b){
-            user = iterator.next();
-                if (user.getID() > lastHighestID){
-                    lastHighestID = user.getID();
-                    User.setCounter(lastHighestID);
-                    b = false;
-                }
-        }
-        /*Iterator<User> iterator = allUsers.iterator();
-        User user;
-        for (int i = 1; i < allUsers.size(); i++){
-            while (iterator.hasNext()){
-                user = iterator.next();
-                if (i != user.getID()){
-                    User.setCounter(i);
-                    break;
-                }
+        for (int i = 0; i < allUsers.size(); i ++){
+            int currentID = allUsers.get(i).getID();
+            if (currentID > lastHighestID){
+                lastHighestID = currentID;
             }
-        }*/
+        }
+        User.setCounter(lastHighestID);
 
         username = JOptionPane.showInputDialog("Please enter a username");
             if (username!=null){
@@ -256,7 +242,7 @@ public class MainMenu extends JFrame{
             }
         }
         if (!allUsers.isEmpty()) {
-            tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+            tbl.setEnabled(false);
             String removeIDAsString;
             removeIDAsString = JOptionPane.showInputDialog(null, pane, "Enter the user ID of the user you wish to remove");
             if (removeIDAsString !=null){
@@ -302,11 +288,11 @@ public class MainMenu extends JFrame{
         while (iterator.hasNext()){
             user = iterator.next();
             if(user != null){
-                dtm.addRow(new String[]{String.valueOf(user.getID()),user.getUsername(), user.getPassword()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+                dtm.addRow(new String[]{String.valueOf(user.getID()),user.getUsername(), user.getPassword()});
             }
         }
         if (!allUsers.isEmpty()) {
-            tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+            tbl.setEnabled(false);
             JOptionPane.showMessageDialog(null, pane, "User List", JOptionPane.INFORMATION_MESSAGE);
         }
         else {
@@ -382,7 +368,7 @@ public class MainMenu extends JFrame{
             }
         }
         if (!allTools.isEmpty()) {
-            tbl.setEnabled(false);          //https://stackoverflow.com/questions/1990817/how-to-make-a-jtable-non-editable
+            tbl.setEnabled(false);
             JOptionPane.showMessageDialog(null, pane, "Tool List", JOptionPane.INFORMATION_MESSAGE);
         }
         else
@@ -408,9 +394,9 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase");
         if (search != null) {
             for (Tool tool : amendableTools) {
-                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (String.valueOf(tool.getId()).equals(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     toolsFound = true;
-                    dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+                    dtm.addRow(new String[]{String.valueOf(tool.getId()), tool.getToolType(), tool.getToolManufacturer(), tool.getToolDesc(), String.valueOf(tool.getToolRate()), tool.getToolStatus()});
                 }
             }
             if (toolsFound) {
@@ -448,12 +434,12 @@ public class MainMenu extends JFrame{
         String search = JOptionPane.showInputDialog("Please enter a search phrase:");
         if (search!=null) {
             for (Tool tool : removableTools) {
-                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                if (String.valueOf(tool.getId()).equals(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
                     searchResults.append(tool).append("\n");
                 }
             }
             if (!searchResults.isEmpty()) {
-                int searchID = 0;
+                int searchID;
                 String searchIDAsString = JOptionPane.showInputDialog("The following tools match your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish to remove.");
                 if (searchIDAsString != null) {
                     while (!isValidSearchID(searchIDAsString)) {
@@ -490,34 +476,45 @@ public class MainMenu extends JFrame{
         }
 
         StringBuilder searchResults = new StringBuilder();
-
-        String search = JOptionPane.showInputDialog("Please enter a search phrase:");
-        if (search != null){
-            for (Tool tool : returnableTools) {
-                if (String.valueOf(tool.getId()) == search || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
-                    searchResults.append(tool).append("\n");
-                }
-            }
-            if (!searchResults.isEmpty()) {
-                int removeID = Integer.parseInt(JOptionPane.showInputDialog("The following tools match your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish to return."));
-                Tool toolToReturn = null;
-                for (Tool tool : allTools) {
-                    if (tool.getId() == removeID) {
-                        toolToReturn = tool;
+        if (!allRentals.isEmpty()) {
+            String search = JOptionPane.showInputDialog("Please enter a search phrase:");
+            if (search != null) {
+                for (Tool tool : returnableTools) {
+                    if (String.valueOf(tool.getId()).equals(search) || tool.getToolType().equalsIgnoreCase(search) || tool.getToolManufacturer().equalsIgnoreCase(search) || tool.getToolDesc().equalsIgnoreCase(search) || tool.getToolStatus().equalsIgnoreCase(search)) {
+                        searchResults.append(tool).append("\n");
                     }
                 }
-                int choice = JOptionPane.showConfirmDialog(null, "The details of your selected tool are:" + "\n\n" + toolToReturn + "\n\nAre you sure you wish to return this tool?");
-                if (choice == JOptionPane.YES_OPTION) {
-                    toolToReturn.setToolStatus("IN");
-                    for (Rental rental : allRentals) {
-                        if (rental.getToolID() == removeID)
-                            allRentals.remove(rental);
+                if (!searchResults.isEmpty()) {
+                    int removeID;
+                    String removeIDAsString = JOptionPane.showInputDialog("The following tools match your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish to return.");
+                    if (removeIDAsString != null) {
+                        while (!isValidSearchID(removeIDAsString)) {
+                            removeIDAsString = JOptionPane.showInputDialog("The following tools match your search:\n\n" + searchResults + "\n\nEnter the id of the tool you wish to return.");
+                        }
+                        removeID = Integer.parseInt(removeIDAsString);
+                        Tool toolToReturn = null;
+                        for (Tool tool : allTools) {
+                            if (tool.getId() == removeID) {
+                                toolToReturn = tool;
+                            }
+                        }
+                        int choice = JOptionPane.showConfirmDialog(null, "The details of your selected tool are:" + "\n\n" + toolToReturn + "\n\nAre you sure you wish to return this tool?");
+                        if (choice == JOptionPane.YES_OPTION) {
+                            toolToReturn.setToolStatus("IN");
+                            try {
+                                for (Rental rental : allRentals) {
+                                    if (rental.getToolID() == removeID)
+                                        allRentals.remove(rental);
+                                }
+                            } catch (ConcurrentModificationException exception) {
+                            }
+                        }
                     }
-                }
+                } else
+                    JOptionPane.showMessageDialog(null, "No matches found", "Search results", JOptionPane.INFORMATION_MESSAGE);
             }
-            else
-                JOptionPane.showMessageDialog(null, "No matches found", "Search results", JOptionPane.INFORMATION_MESSAGE);
         }
+        else JOptionPane.showMessageDialog(null, "There are no rentals recorded on the system");
     }
     public void viewRentals(ArrayList<Rental> allRentals){
 
@@ -532,11 +529,19 @@ public class MainMenu extends JFrame{
         tbl.setModel(dtm);
 
         Iterator<Rental> iterator = allRentals.iterator();
-        JScrollPane pane = new JScrollPane(tbl);                            //https://stackoverflow.com/questions/2320812/jtable-wont-show-column-headers
+
+        /*****************************************************
+         * Title: JTable won't show column headers
+         * Author: Erkan Haspulat
+         * Site owner/sponsor: stackoverflow.com
+         * Availability: https://stackoverflow.com/questions/2320812/jtable-wont-show-column-headers
+         * *****************************************************/
+        JScrollPane pane = new JScrollPane(tbl);
+
         while (iterator.hasNext()){
             rental = iterator.next();
             if(rental != null){
-                dtm.addRow(new String[]{rental.getCustName(), rental.getEmail(), String.valueOf(rental.getPhone()), rental.getEircode(), String.valueOf(rental.getToolID())});       //https://stackoverflow.com/questions/22371720/how-to-add-row-dynamically-in-jtable
+                dtm.addRow(new String[]{rental.getCustName(), rental.getEmail(), String.valueOf(rental.getPhone()), rental.getEircode(), String.valueOf(rental.getToolID())});
             }
         }
         if (!allRentals.isEmpty()) {
@@ -628,19 +633,17 @@ public class MainMenu extends JFrame{
     public boolean isValidRate(String rate){
         boolean result = false;
 
-        if (!rate.isEmpty()){
-            for (int i = 0; i < rate.length(); i++){
-                if (!Character.isDigit(rate.charAt(i))){
+        if (!rate.isEmpty()) {
+            for (int i = 0; i < rate.length(); i++) {
+                if (!Character.isDigit(rate.charAt(i))) {
                     result = false;
                     JOptionPane.showMessageDialog(null, "Invalid Rate", "Error", JOptionPane.ERROR_MESSAGE);
                     break;
-                }
-                else {
+                } else {
                     result = true;
                 }
             }
-        }
-        else {
+        } else {
             JOptionPane.showMessageDialog(null, "Rate was not entered", "Error", JOptionPane.ERROR_MESSAGE);
         }
 

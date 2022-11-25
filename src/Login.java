@@ -19,13 +19,26 @@ public class Login extends JFrame{
         setContentPane(panel1);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());    //https://www.youtube.com/watch?v=cKmr-9Wc2u4
-        setVisible(true);
+
+        /*****************************************************
+         * Author: Zoran Davidovic
+         * Site owner/sponsor: https://www.youtube.com
+         * Availability: https://www.youtube.com/watch?v=cKmr-9Wc2u4
+         *****************************************************/
+        setIconImage(new ImageIcon(getClass().getResource("drill.png")).getImage());
 
         setSize(300, 400);
-        Toolkit toolkit = getToolkit();                                                         //https://www.youtube.com/watch?v=pbDbnmlFTS0
+
+        /*****************************************************
+         * Author: Indra Subedi
+         * Site owner/sponsor: //https://www.youtube.com
+         * Availability: //https://www.youtube.com/watch?v=pbDbnmlFTS0
+         *****************************************************/
+        Toolkit toolkit = getToolkit();
         Dimension size = toolkit.getScreenSize();
         setLocation(size.width/2 - getWidth()/2, size.height/2 - getHeight()/2);
+
+        setVisible(true);
 
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Users.data"));
@@ -64,7 +77,7 @@ public class Login extends JFrame{
 
     private boolean validLogin() {
         boolean result, containsUsername = false, containsPassword = false;
-        String password = String.valueOf(txtPassword.getPassword());  //https://stackoverflow.com/questions/14162225/getting-text-from-password-field
+        String password = String.valueOf(txtPassword.getPassword());
         if (!txtUsername.getText().isEmpty()){
             if(!password.equals("")){
                 for (User user : allUsers){
